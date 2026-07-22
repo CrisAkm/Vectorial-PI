@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Producto Interno · Espacios Vectoriales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f4f0fb;
+    --bg-2: #ece3f7;
+    --panel: #ffffff;
+    --ink: #352d54;
+    --muted: #7a7196;
+    --line: #e2d8f0;
+    --u-color: #ef9c7e;
+    --u-color-soft: #fbe2d7;
+    --v-color: #7fadd6;
+    --v-color-soft: #dbe9f5;
+    --inner-color: #7cc3a0;
+    --inner-color-soft: #dcf0e4;
+    --orth-color: #e79ac0;
+    --radius: 18px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0;
+    background: radial-gradient(ellipse at top, var(--bg-2), var(--bg) 60%);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  ::selection{ background: var(--inner-color-soft); }
+
+  .wrap{
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 48px 32px 64px;
+  }
+
+  header.hero{
+    text-align:center;
+    margin-bottom: 40px;
+  }
+
+  .eyebrow{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background: var(--panel);
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+  }
+  .eyebrow span.dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--inner-color);
+    display:inline-block;
+  }
+
+  h1.title{
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    line-height: 1.02;
+    margin: 20px 0 12px;
+    letter-spacing: -0.01em;
+  }
+  h1.title em{
+    font-style: italic;
+    font-weight: 400;
+    color: var(--u-color);
+  }
+
+  p.subtitle{
+    max-width: 620px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  /* ===== layout ===== */
+  .stage{
+    display:grid;
+    grid-template-columns: 300px 1fr 300px;
+    gap: 24px;
+    align-items: start;
+    margin-top: 44px;
+  }
+
+  @media (max-width: 1080px){
+    .stage{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 24px;
+  }
+
+  .panel h2{
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .panel h2 .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color:#fff;
+    padding: 3px 9px;
+    border-radius: 6px;
+  }
+  .def h2 .tag{ background: var(--u-color); }
+  .props h2 .tag{ background: var(--v-color); }
+
+  .panel p{
+    font-size: 0.94rem;
+    line-height: 1.62;
+    color: var(--ink);
+    margin: 0 0 14px;
+  }
+  .panel p.muted{ color: var(--muted); }
+
+  .formula-box{
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--u-color-soft);
+    border-radius: 12px;
+    padding: 16px 14px;
+    font-size: 0.98rem;
+    color: #7a3d24;
+    margin-bottom: 16px;
+    text-align:center;
+    letter-spacing: 0.01em;
+  }
+
+  ul.prop-list{
+    list-style:none;
+    margin:0; padding:0;
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+  }
+  ul.prop-list li{
+    display:flex;
+    gap:12px;
+    font-size: 0.9rem;
+    line-height:1.5;
+    align-items:flex-start;
+  }
+  ul.prop-list .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--v-color);
+    background: var(--v-color-soft);
+    border-radius:7px;
+    padding: 4px 7px;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+  ul.prop-list b{ font-weight:600; }
+  ul.prop-list code{
+    font-family:'JetBrains Mono', monospace;
+    background: var(--bg-2);
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-size: 0.83em;
+  }
+
+  /* ===== center canvas ===== */
+  .canvas-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 20px 8px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .canvas-head{
+    width:100%;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .canvas-head h2{
+    font-family:'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight:600;
+    margin:0;
+  }
+
+  .hint{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    background: var(--bg-2);
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+
+  #vectorSvg{
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+    touch-action: none;
+    cursor: default;
+  }
+
+  .handle{ cursor: grab; }
+  .handle:active{ cursor: grabbing; }
+
+  .readout{
+    width:100%;
+    max-width: 460px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 14px 0 18px;
+  }
+
+  .stat{
+    background: var(--bg-2);
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align:center;
+  }
+  .stat .label{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform:uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .stat .value{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 1.02rem;
+    font-weight: 600;
+  }
+
+  .status-strip{
+    width:100%;
+    max-width: 460px;
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    padding: 9px 10px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    transition: background 0.25s ease, color 0.25s ease;
+    background: var(--inner-color-soft);
+    color: #2e6b4d;
+  }
+  .status-strip.orth{
+    background: #fbe6f1;
+    color: #a3396f;
+  }
+
+  /* ===== bottom strip ===== */
+  .bottom{
+    margin-top: 26px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 30px;
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 30px;
+    align-items:center;
+  }
+  @media (max-width: 880px){
+    .bottom{ grid-template-columns: 1fr; }
+  }
+  .bottom h3{
+    font-family:'Fraunces', serif;
+    font-size: 1.2rem;
+    margin: 0 0 10px;
+  }
+  .bottom p{
+    font-size: 0.92rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin:0;
+  }
+  .bottom .example-box{
+    background: var(--bg-2);
+    border-radius: 14px;
+    padding: 16px 18px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .bottom .example-box .k{ color: var(--v-color); }
+  .bottom .example-box .r{ color: var(--u-color); }
+
+  footer{
+    text-align:center;
+    margin-top: 36px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow"><span class="dot"></span>Álgebra lineal · Espacios vectoriales | Maria Fernanda Octamendez Lezama |Daniela Hernández Bonilla | Emmanuel Tetlalmatzi Zempoalteca | Cristian Pérez Hernández</span>
+    <h1 class="title">El <em>producto interno</em></h1>
+    <p class="subtitle">Una forma de medir cuánto se parecen dos vectores: su longitud, el ángulo entre ellos y si son perpendiculares. Arrastra las flechas del diagrama para verlo en acción.</p>
+  </header>
+
+  <div class="stage">
+
+    <!-- DEFINICIÓN -->
+    <section class="panel def">
+      <h2><span class="tag">01</span>Definición</h2>
+      <p>Un <b>producto interno</b> sobre un espacio vectorial real <code>V</code> es una función</p>
+      <div class="formula-box">⟨ · , · ⟩ : V × V → ℝ</div>
+      <p>que toma dos vectores <b>u</b> y <b>v</b> y devuelve un número real. En ℝⁿ, la forma más común es el <b>producto punto</b>:</p>
+      <div class="formula-box">⟨u,v⟩ = u₁v₁ + u₂v₂ + ... + uₙvₙ</div>
+      <p class="muted">Con él se definen la <b>norma</b> ‖u‖ = √⟨u,u⟩ y el <b>ángulo</b> entre vectores, dos ideas geométricas que por sí solo el álgebra de vectores no incluye.</p>
+    </section>
+
+    <!-- CANVAS -->
+    <section class="canvas-card">
+      <div class="canvas-head">
+        <h2>Diagrama interactivo</h2>
+        <span class="hint">arrastra u o v</span>
+      </div>
+
+      <svg id="vectorSvg" viewBox="0 0 460 460"></svg>
+
+      <div class="status-strip" id="statusStrip">calculando…</div>
+
+      <div class="readout">
+        <div class="stat">
+          <div class="label">⟨u, v⟩</div>
+          <div class="value" id="valDot">–</div>
+        </div>
+        <div class="stat">
+          <div class="label">‖u‖ · ‖v‖</div>
+          <div class="value" id="valNorms">–</div>
+        </div>
+        <div class="stat">
+          <div class="label">θ (ángulo)</div>
+          <div class="value" id="valAngle">–</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROPIEDADES -->
+    <section class="panel props">
+      <h2><span class="tag">02</span>Propiedades</h2>
+      <ul class="prop-list">
+        <li><span class="num">i</span><span><b>Simetría</b> — <code>⟨u,v⟩ = ⟨v,u⟩</code>. El orden no importa.</span></li>
+        <li><span class="num">ii</span><span><b>Linealidad</b> — <code>⟨au+bw, v⟩ = a⟨u,v⟩ + b⟨w,v⟩</code>. Se distribuye como una suma normal.</span></li>
+        <li><span class="num">iii</span><span><b>Positividad</b> — <code>⟨u,u⟩ ≥ 0</code>, y vale 0 solo si <code>u = 0</code>. Por eso siempre puede definir una longitud.</span></li>
+        <li><span class="num">iv</span><span><b>Cauchy-Schwarz</b> — <code>|⟨u,v⟩| ≤ ‖u‖‖v‖</code>. Garantiza que el ángulo entre vectores siempre exista.</span></li>
+        <li><span class="num">v</span><span><b>Ortogonalidad</b> — si <code>⟨u,v⟩ = 0</code>, los vectores son perpendiculares entre sí.</span></li>
+      </ul>
+    </section>
+
+  </div>
+
+  <!-- BOTTOM: brief context -->
+  <div class="bottom">
+    <div>
+      <h3>¿Por qué importa esto?</h3>
+      <p>El producto interno convierte un espacio vectorial "plano" (sin noción de tamaño o dirección) en un espacio con geometría: ahí nacen la distancia, el ángulo y la ortogonalidad. Es la base de proyecciones, mínimos cuadrados, Fourier y, en general, de casi todo lo que en ingeniería llamamos "similitud" entre datos.</p>
+    </div>
+    <div class="example-box">
+      <div><span class="k">// similitud coseno</span></div>
+      <div>sim(u, v) = <span class="r">⟨u,v⟩</span> / (‖u‖‖v‖)</div>
+      <div><span class="k">// usada en embeddings, ML, NLP</span></div>
+      <div>sim → 1 : vectores muy parecidos</div>
+      <div>sim → 0 : sin relación (ortogonales)</div>
+    </div>
+  </div>
+
+  <footer>producto interno · espacio vectorial ℝ² · arrastra las flechas para explorar</footer>
+</div>
+
+<script>
+(function(){
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById('vectorSvg');
+  const size = 460;
+  const center = size/2;
+  const scale = 34; // px per unit
+
+  // state: vectors in math coords (x right, y up)
+  let u = { x: 4, y: 1.5 };
+  let v = { x: 1.5, y: 3.5 };
+
+  function toScreen(pt){
+    return { x: center + pt.x*scale, y: center - pt.y*scale };
+  }
+
+  function el(tag, attrs){
+    const e = document.createElementNS(svgNS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // static layers
+  const gridLayer = el('g', {});
+  const axesLayer = el('g', {});
+  const dynamicLayer = el('g', { id: 'dynamic' });
+  svg.appendChild(gridLayer);
+  svg.appendChild(axesLayer);
+  svg.appendChild(dynamicLayer);
+
+  // draw grid
+  const range = 7;
+  for(let i=-range;i<=range;i++){
+    const p1 = toScreen({x:i, y:-range});
+    const p2 = toScreen({x:i, y:range});
+    gridLayer.appendChild(el('line', {x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y, stroke:'#ece3f7', 'stroke-width':1}));
+    const p3 = toScreen({x:-range, y:i});
+    const p4 = toScreen({x:range, y:i});
+    gridLayer.appendChild(el('line', {x1:p3.x,y1:p3.y,x2:p4.x,y2:p4.y, stroke:'#ece3f7', 'stroke-width':1}));
+  }
+  // axes
+  const ax1 = toScreen({x:-range,y:0}), ax2 = toScreen({x:range,y:0});
+  const ay1 = toScreen({x:0,y:-range}), ay2 = toScreen({x:0,y:range});
+  axesLayer.appendChild(el('line', {x1:ax1.x,y1:ax1.y,x2:ax2.x,y2:ax2.y, stroke:'#d8cdec', 'stroke-width':1.5}));
+  axesLayer.appendChild(el('line', {x1:ay1.x,y1:ay1.y,x2:ay2.x,y2:ay2.y, stroke:'#d8cdec', 'stroke-width':1.5}));
+
+  // arrow marker defs
+  const defs = el('defs', {});
+  function makeMarker(id, color){
+    const m = el('marker', {id:id, markerWidth:10, markerHeight:10, refX:6, refY:3, orient:'auto', markerUnits:'strokeWidth'});
+    m.appendChild(el('path', {d:'M0,0 L0,6 L7,3 z', fill:color}));
+    defs.appendChild(m);
+  }
+  makeMarker('arrowU', '#ef9c7e');
+  makeMarker('arrowV', '#7fadd6');
+  svg.appendChild(defs);
+
+  function dot(a,b){ return a.x*b.x + a.y*b.y; }
+  function norm(a){ return Math.sqrt(dot(a,a)); }
+
+  function render(){
+    dynamicLayer.innerHTML = '';
+
+    const nu = norm(u), nv = norm(v);
+    const d = dot(u,v);
+    const cosT = (nu>0 && nv>0) ? Math.max(-1, Math.min(1, d/(nu*nv))) : 0;
+    const angleDeg = (nu>0 && nv>0) ? (Math.acos(cosT)*180/Math.PI) : 0;
+    const isOrth = nu>0 && nv>0 && Math.abs(d) < 0.18;
+
+    // projection of u onto v
+    if(nv > 0.001){
+      const scaleProj = d/(nv*nv);
+      const proj = { x: v.x*scaleProj, y: v.y*scaleProj };
+      const oS = toScreen({x:0,y:0});
+      const pS = toScreen(proj);
+      const uS = toScreen(u);
+      dynamicLayer.appendChild(el('line', {x1:pS.x,y1:pS.y,x2:uS.x,y2:uS.y, stroke:'#c9c0dd', 'stroke-width':1.4, 'stroke-dasharray':'4 4'}));
+      dynamicLayer.appendChild(el('line', {x1:oS.x,y1:oS.y,x2:pS.x,y2:pS.y, stroke:'#a6d9be', 'stroke-width':3, opacity:0.85}));
+    }
+
+    // angle arc
+    if(nu>0.01 && nv>0.01){
+      const a1 = Math.atan2(u.y,u.x);
+      const a2 = Math.atan2(v.y,v.x);
+      const r = 26;
+      const arcColor = isOrth ? '#e79ac0' : '#c9c0dd';
+      const p1 = { x: center + r*Math.cos(a1), y: center - r*Math.sin(a1) };
+      const p2 = { x: center + r*Math.cos(a2), y: center - r*Math.sin(a2) };
+      let diff = a2 - a1;
+      while(diff <= -Math.PI) diff += 2*Math.PI;
+      while(diff > Math.PI) diff -= 2*Math.PI;
+      const largeArc = Math.abs(diff) > Math.PI ? 1 : 0;
+      const sweep = diff > 0 ? 0 : 1;
+      dynamicLayer.appendChild(el('path', {
+        d:`M ${p1.x} ${p1.y} A ${r} ${r} 0 ${largeArc} ${sweep} ${p2.x} ${p2.y}`,
+        fill:'none', stroke:arcColor, 'stroke-width':2
+      }));
+    }
+
+    // origin dot
+    const o = toScreen({x:0,y:0});
+    dynamicLayer.appendChild(el('circle', {cx:o.x, cy:o.y, r:3, fill:'#352d54'}));
+
+    // vector u
+    const uEnd = toScreen(u);
+    dynamicLayer.appendChild(el('line', {x1:o.x,y1:o.y,x2:uEnd.x,y2:uEnd.y, stroke:'#ef9c7e', 'stroke-width':3.4, 'marker-end':'url(#arrowU)'}));
+    const uHandle = el('circle', {cx:uEnd.x, cy:uEnd.y, r:9, fill:'#ef9c7e', class:'handle', 'data-vec':'u'});
+    dynamicLayer.appendChild(uHandle);
+    const uLabel = toScreen({x:u.x*1.13, y:u.y*1.13+0.35});
+    const ul = el('text', {x:uLabel.x, y:uLabel.y, 'font-family':'JetBrains Mono, monospace', 'font-size':13, 'font-weight':600, fill:'#c96a3f'});
+    ul.textContent = 'u';
+    dynamicLayer.appendChild(ul);
+
+    // vector v
+    const vEnd = toScreen(v);
+    dynamicLayer.appendChild(el('line', {x1:o.x,y1:o.y,x2:vEnd.x,y2:vEnd.y, stroke:'#7fadd6', 'stroke-width':3.4, 'marker-end':'url(#arrowV)'}));
+    const vHandle = el('circle', {cx:vEnd.x, cy:vEnd.y, r:9, fill:'#7fadd6', class:'handle', 'data-vec':'v'});
+    dynamicLayer.appendChild(vHandle);
+    const vLabel = toScreen({x:v.x*1.13, y:v.y*1.13+0.35});
+    const vl = el('text', {x:vLabel.x, y:vLabel.y, 'font-family':'JetBrains Mono, monospace', 'font-size':13, 'font-weight':600, fill:'#3c7cab'});
+    vl.textContent = 'v';
+    dynamicLayer.appendChild(vl);
+
+    // readouts
+    document.getElementById('valDot').textContent = d.toFixed(2);
+    document.getElementById('valNorms').textContent = (nu.toFixed(2) + ' · ' + nv.toFixed(2));
+    document.getElementById('valAngle').textContent = angleDeg.toFixed(0) + '°';
+
+    const strip = document.getElementById('statusStrip');
+    if(isOrth){
+      strip.textContent = '⟨u,v⟩ ≈ 0 → u y v son ortogonales';
+      strip.classList.add('orth');
+    } else {
+      strip.textContent = 'cos θ = ' + cosT.toFixed(2) + '  →  vectores ' + (cosT>0.7 ? 'muy alineados' : cosT<-0.3 ? 'apuntando en direcciones opuestas' : 'parcialmente relacionados');
+      strip.classList.remove('orth');
+    }
+  }
+
+  // drag handling
+  let dragging = null;
+
+  function screenToMath(clientX, clientY){
+    const rect = svg.getBoundingClientRect();
+    const scaleFactor = size / rect.width;
+    const sx = (clientX - rect.left) * scaleFactor;
+    const sy = (clientY - rect.top) * scaleFactor;
+    return {
+      x: (sx - center) / scale,
+      y: (center - sy) / scale
+    };
+  }
+
+  function clampVec(pt){
+    const r = Math.sqrt(pt.x*pt.x + pt.y*pt.y);
+    const max = range - 0.4;
+    if(r > max){
+      return { x: pt.x/r*max, y: pt.y/r*max };
+    }
+    return pt;
+  }
+
+  function pointerDown(e){
+    const target = e.target;
+    if(target.classList && target.classList.contains('handle')){
+      dragging = target.getAttribute('data-vec');
+      svg.setPointerCapture && e.pointerId !== undefined && svg.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    }
+  }
+  function pointerMove(e){
+    if(!dragging) return;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const m = clampVec(screenToMath(clientX, clientY));
+    if(dragging === 'u') u = m; else v = m;
+    render();
+    e.preventDefault();
+  }
+  function pointerUp(){ dragging = null; }
+
+  svg.addEventListener('pointerdown', pointerDown);
+  window.addEventListener('pointermove', pointerMove);
+  window.addEventListener('pointerup', pointerUp);
+  svg.addEventListener('touchstart', pointerDown, {passive:false});
+  window.addEventListener('touchmove', pointerMove, {passive:false});
+  window.addEventListener('touchend', pointerUp);
+
+  render();
+})();
+</script>
+
+</body>
+</html>
