@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listas Doblemente Ligadas & Estructuras Dinámicas | Exposición Avanzada</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Fondo dinámico con partículas, rejilla cyberpunk y canvas 3D -->
+  <div class="cyber-background">
+    <canvas id="canvas3d"></canvas>
+    <div class="cyber-grid"></div>
+  </div>
+
+  <!-- Barra Superior de Navegación y Herramientas del Expositor -->
+  <header class="top-nav">
+    <div class="brand-badge">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <div style="font-weight: 800; font-size: 0.95rem; line-height: 1.1;">ESTRUCTURAS DE DATOS</div>
+        <div style="font-size: 0.72rem; color: var(--text-dim);">PÁGINAS 80 — 88 • EXPOSICIÓN</div>
+      </div>
+      <span class="brand-tag">LISTAS DOBLES</span>
+    </div>
+
+    <div class="presentation-title-mini" id="nav-active-topic">
+      1. Introducción & Conceptos Clave
+    </div>
+
+    <div class="header-controls">
+      <!-- Cronómetro del Expositor -->
+      <div class="timer-pill" id="timer-pill-btn" title="Clic para pausar / reanudar el cronómetro">
+        <span class="dot"></span>
+        <span id="timer-text">00:00</span>
+      </div>
+
+      <!-- Botón de Audio -->
+      <button class="btn-nav-action" id="btn-sound-toggle" title="Activar/Desactivar efectos de sonido sintetizados">
+        🔊 Audio
+      </button>
+
+      <!-- Botón Vista General / Diapositivas -->
+      <button class="btn-nav-action" id="btn-overview" title="Abrir cuadrícula de todas las diapositivas (Tecla M)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Índice
+      </button>
+
+      <!-- Pantalla Completa -->
+      <button class="btn-nav-action" id="btn-fullscreen" title="Pantalla Completa (Tecla F)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        F11
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenedor del Viewport de la Presentación -->
+  <main class="presentation-viewport">
+
+    <!-- ====================================================================
+         SLIDE 1: PORTADA VANGUARDISTA
+         ==================================================================== -->
+    <section class="slide active" data-title="Portada e Introducción">
+      <div class="slide-content-wrapper" style="justify-content: center; align-items: center; text-align: center;">
+        <div style="max-width: 950px;">
+          <div style="display: flex; justify-content: center; gap: 0.6rem; margin-bottom: 1.5rem;">
+            <span class="tag-badge cyan">EDD-2026</span>
+            <span class="tag-badge purple">PÁGINAS 80 A 88</span>
+            <span class="tag-badge emerald">SISTEMAS DINÁMICOS</span>
+          </div>
+
+          <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.2rem;">
+            Listas <span class="highlight">Doblemente Ligadas</span><br>& Modelos de Espera
+          </h1>
+
+          <p style="font-size: 1.25rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; max-width: 780px; margin-left: auto; margin-right: auto;">
+            Una inmersión vanguardista en la topología bidireccional de memoria, algoritmos de inserción/retiro, análisis de colas, simulación de servidores y evaluación conceptual.
+          </p>
+
+          <!-- SECCIÓN DE INTEGRANTES DEL EQUIPO (HASTA 12+ INTEGRANTES) -->
+          <div class="team-section-wrapper">
+            <div class="team-section-header">
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span class="tag-badge cyan">👥 INTEGRANTES DEL EQUIPO (12 EXPOSITORES)</span>
+                <span style="font-size: 0.75rem; color: var(--text-dim);">Haz clic en cualquier nombre o tema para editarlo en vivo</span>
+              </div>
+              <button class="btn-ctrl btn-emerald" onclick="window.TeamManager.addMember()" style="padding: 0.3rem 0.75rem; font-size: 0.78rem;">
+                + Agregar Integrante
+              </button>
+            </div>
+
+            <div class="team-grid-12" id="team-grid">
+              <!-- Integrante 1 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));">01</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Cristian Pérez</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Expositor Principal</div>
+                </div>
+              </div>
+
+              <!-- Integrante 2 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));">02</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 2</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Anatomía del Nodo</div>
+                </div>
+              </div>
+
+              <!-- Integrante 3 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));">03</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 3</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Figura III.18 (Topología)</div>
+                </div>
+              </div>
+
+              <!-- Integrante 4 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-amber), var(--accent-rose));">04</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 4</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Algoritmo de Inserción</div>
+                </div>
+              </div>
+
+              <!-- Integrante 5 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));">05</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 5</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Figura III.19 (Paso a Paso)</div>
+                </div>
+              </div>
+
+              <!-- Integrante 6 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));">06</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 6</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Operación de Retiro O(1)</div>
+                </div>
+              </div>
+
+              <!-- Integrante 7 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-emerald), var(--accent-purple));">07</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 7</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Figura III.20 (Circular)</div>
+                </div>
+              </div>
+
+              <!-- Integrante 8 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-rose), var(--accent-amber));">08</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 8</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Memoria Contigua vs Ligada</div>
+                </div>
+              </div>
+
+              <!-- Integrante 9 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));">09</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 9</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Colas & Principio PEPS</div>
+                </div>
+              </div>
+
+              <!-- Integrante 10 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-emerald), var(--accent-amber));">10</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 10</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Modelos de Servidores</div>
+                </div>
+              </div>
+
+              <!-- Integrante 11 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-emerald));">11</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 11</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Pilas LIFO (Problema 2)</div>
+                </div>
+              </div>
+
+              <!-- Integrante 12 -->
+              <div class="team-card">
+                <span class="team-card-del" onclick="window.TeamManager.removeMember(this)" title="Eliminar integrante">×</span>
+                <div class="team-avatar" style="background: linear-gradient(135deg, var(--accent-amber), var(--accent-cyan));">12</div>
+                <div class="team-info">
+                  <div class="team-name" contenteditable="true" spellcheck="false" title="Clic para editar nombre">Integrante 12</div>
+                  <div class="team-role" contenteditable="true" spellcheck="false">Simulación & Cuestionario</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjetas flotantes interactivas de la portada -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-bottom: 2rem; text-align: left;">
+            <div class="glass-panel" style="padding: 1.2rem;">
+              <div style="color: var(--accent-cyan); font-weight: 800; font-size: 1.2rem; margin-bottom: 0.3rem;">01. Topología Doble</div>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Estructura de 3 campos: LI (Antecesor), Dato central y LD (Sucesor). Punteros a tierra (NULL) y centinelas.</p>
+            </div>
+            <div class="glass-panel" style="padding: 1.2rem;">
+              <div style="color: var(--accent-purple); font-weight: 800; font-size: 1.2rem; margin-bottom: 0.3rem;">02. Algoritmos en O(1)</div>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Reconexión de 4 punteros sin pérdida de referencias. Eliminación y puenteo de nodos.</p>
+            </div>
+            <div class="glass-panel" style="padding: 1.2rem;">
+              <div style="color: var(--accent-emerald); font-weight: 800; font-size: 1.2rem; margin-bottom: 0.3rem;">03. Colas & Simulación</div>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Almacenamiento contiguo vs ligado, 4 modelos de servidores (Pág 83-84) y caso práctico de gasolinera.</p>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-dim);">
+            <span>Navega con: <strong style="color: var(--text-main);">Espacio / Flecha Derecha →</strong></span>
+            <span>•</span>
+            <span>Índice rápido: <strong style="color: var(--accent-cyan);">Tecla M</strong></span>
+            <span>•</span>
+            <span>Pantalla Completa: <strong style="color: var(--accent-emerald);">Tecla F</strong></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 2: ANATOMÍA DEL NODO DOBLEMENTE LIGADO (PÁG 80)
+         ==================================================================== -->
+    <section class="slide" data-title="Anatomía del Nodo Doblemente Ligado">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">02 / 16</span>
+            <span class="slide-category">TEORÍA FUNDAMENTAL • PÁG. 80</span>
+          </div>
+          <h2 class="slide-title">Anatomía del <span class="highlight">Nodo Doblemente Ligado</span></h2>
+          <p class="slide-subtitle">Superando la limitación unidireccional de las listas simples mediante doble campo de liga.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Conceptos teóricos -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Estructura Interna del Nodo</span>
+              <span class="tag-badge cyan">3 CAMPOS</span>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>1. Liga Izquierda (LI / Prev / Antecesor)</h4>
+              <p>Apuntador que almacena la dirección de memoria del <strong>nodo anterior</strong>. Permite retroceder en la secuencia sin reiniciar la búsqueda desde la cabeza.</p>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>2. Sección Central (INFO / Dato / Carga Útil)</h4>
+              <p>Espacio reservado para almacenar el valor o entidad (en los diagramas del libro denotado con la variable <code>x</code>, <code>y</code> o <code>z</code>).</p>
+            </div>
+
+            <div class="concept-card cyan">
+              <h4>3. Liga Derecha (LD / Next / Sucesor)</h4>
+              <p>Apuntador que almacena la dirección de memoria del <strong>nodo siguiente</strong>, preservando el flujo hacia adelante.</p>
+            </div>
+
+            <div class="concept-card amber" style="margin-top: auto;">
+              <h4>¿Por qué adoptarlas? (Trade-off de Ingeniería)</h4>
+              <p><strong>Ventaja:</strong> Recorrido en ambas direcciones y borrado en tiempo $O(1)$ cuando se tiene la referencia del nodo.<br>
+              <strong>Costo:</strong> Mayor consumo de memoria (dos punteros por nodo en lugar de uno).</p>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Diagrama gráfico interactivo -->
+          <div class="glass-panel" style="align-items: center; justify-content: center;">
+            <div class="glass-panel-header" style="width: 100%;">
+              <span class="glass-panel-title">Visualización Gráfica del Nodo</span>
+              <span class="tag-badge purple">REPRESENTACIÓN EN MEMORIA</span>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;">
+              <!-- Bloque Holográfico de Nodo en 3D -->
+              <div class="scene-3d-node" title="Bloque Tridimensional del Nodo Doblemente Ligado">
+                <div class="cube-3d" id="interactive-cube-3d">
+                  <div class="cube-face cube-face-front">
+                    <div class="dll-cell li" style="font-size: 0.8rem; font-weight: bold; border-radius: 12px 0 0 12px;">LI</div>
+                    <div class="dll-cell info" style="font-size: 1.35rem; font-weight: 900;">'x'</div>
+                    <div class="dll-cell ld" style="font-size: 0.8rem; font-weight: bold; border-radius: 0 12px 12px 0;">LD</div>
+                  </div>
+                  <div class="cube-face cube-face-back">DIRECCIÓN DE MEMORIA</div>
+                  <div class="cube-face cube-face-right">LD ➔ (Sucesor)</div>
+                  <div class="cube-face cube-face-left">⬅ LI (Antecesor)</div>
+                  <div class="cube-face cube-face-top">NODO 3D DINÁMICO</div>
+                  <div class="cube-face cube-face-bottom">HEAP ALLOCATION</div>
+                </div>
+              </div>
+
+              <!-- Controles de Rotación 3D -->
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 0.8rem;">
+                <button class="btn-ctrl btn-purple" id="btn-node-3d-toggle" onclick="window.Node3D.toggleRotation()" style="font-size: 0.78rem;">
+                  ⏸ Pausar Giro 3D
+                </button>
+                <button class="btn-ctrl" onclick="window.Node3D.resetOrientation()" style="font-size: 0.78rem;">
+                  ↺ Vista Frontal
+                </button>
+              </div>
+
+              <!-- Gran Nodo de Demostración 2D -->
+              <div style="width: 380px; height: 100px; background: rgba(15, 23, 42, 0.95); border: 2px solid var(--accent-cyan); border-radius: 14px; display: grid; grid-template-columns: 1fr 1.6fr 1fr; box-shadow: 0 0 25px rgba(56, 189, 248, 0.25); position: relative;">
+                
+                <div class="dll-cell li" style="font-size: 0.85rem; font-weight: 800; border-radius: 12px 0 0 12px;">
+                  <span style="font-size: 0.65rem; color: var(--text-dim);">CAMPO</span>
+                  LI
+                  <span style="font-size: 0.6rem; color: var(--accent-emerald); margin-top: 2px;">← Antecesor</span>
+                </div>
+
+                <div class="dll-cell info" style="font-size: 1.5rem; font-weight: 900; background: rgba(255,255,255,0.03);">
+                  <span style="font-size: 0.65rem; color: var(--text-dim); margin-bottom: 2px;">DATO</span>
+                  'x'
+                  <span style="font-size: 0.6rem; color: var(--text-muted); font-family: var(--font-sans); margin-top: 2px;">Información</span>
+                </div>
+
+                <div class="dll-cell ld" style="font-size: 0.85rem; font-weight: 800; border-radius: 0 12px 12px 0;">
+                  <span style="font-size: 0.65rem; color: var(--text-dim);">CAMPO</span>
+                  LD
+                  <span style="font-size: 0.6rem; color: var(--accent-cyan); margin-top: 2px;">Sucesor →</span>
+                </div>
+              </div>
+
+              <!-- Código C / C++ del struct -->
+              <div class="code-box" style="width: 100%; max-width: 480px;">
+                <span class="keyword">struct</span> <span class="type">NodoDoble</span> {<br>
+                &nbsp;&nbsp;<span class="type">TipoDato</span> <span class="variable">dato</span>;         <span class="comment">// Información central ('x')</span><br>
+                &nbsp;&nbsp;<span class="keyword">struct</span> <span class="type">NodoDoble</span>* <span class="variable">LI</span>;  <span class="comment">// Apuntador Izquierdo (Antecesor)</span><br>
+                &nbsp;&nbsp;<span class="keyword">struct</span> <span class="type">NodoDoble</span>* <span class="variable">LD</span>;  <span class="comment">// Apuntador Derecho (Sucesor)</span><br>
+                };
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 3: FIGURA III.18 - LISTA DOBLEMENTE LIGADA ESTÁNDAR (PÁG 80)
+         ==================================================================== -->
+    <section class="slide" data-title="Figura III.18: Lista Doblemente Ligada">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">03 / 16</span>
+            <span class="slide-category">DIAGRAMA OFICIAL • PÁG. 80</span>
+          </div>
+          <h2 class="slide-title">Figura III.18: <span class="highlight">Topología de 3 Nodos</span></h2>
+          <p class="slide-subtitle">Conexión horizontal con símbolos de tierra eléctrica (NULL) y apuntadores externos I (Inicio) y D (Derecho).</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Simulación Interactiva -->
+          <div class="glass-panel" style="flex: 1;">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Diagrama Interactivo (Fig. III.18)</span>
+              <span class="tag-badge cyan">SIMULADOR EN VIVO</span>
+            </div>
+
+            <!-- Escenario Gráfico SVG / DOM -->
+            <div class="visualizer-stage" id="fig18-stage" style="flex-direction: column; padding: 2rem 1rem;">
+              
+              <!-- Apuntadores Externos I y D en la parte superior -->
+              <div style="width: 100%; max-width: 620px; display: flex; justify-content: space-between; padding: 0 45px; margin-bottom: 0.5rem;">
+                <div class="external-pointer pointer-i">
+                  <span>Apuntador I ↓</span>
+                  <span style="font-size: 0.65rem; color: var(--text-dim);">(Inicio / Cabeza)</span>
+                </div>
+                <div class="external-pointer pointer-d">
+                  <span>Apuntador D ↓</span>
+                  <span style="font-size: 0.65rem; color: var(--text-dim);">(Derecho / Cola)</span>
+                </div>
+              </div>
+
+              <!-- Cadena de Nodos y Conexiones -->
+              <div class="node-container" style="display: flex; align-items: center; justify-content: center; gap: 0.8rem; width: 100%;">
+                
+                <!-- Tierra Izquierda (NULL) -->
+                <div class="ground-symbol" title="Símbolo de tierra eléctrica: Indica NULL o vacío">
+                  <svg viewBox="0 0 24 24"><path d="M12 3v10M5 13h14M8 17h8M11 21h2" stroke-width="2.5" stroke-linecap="round"/></svg>
+                  <span class="ground-text">NULL</span>
+                </div>
+
+                <span style="color: var(--accent-rose); font-weight: bold; font-size: 1.2rem;">←</span>
+
+                <!-- Nodo 1 ('x') -->
+                <div class="dll-node" id="fig18-node-0">
+                  <div class="dll-cell li">LI</div>
+                  <div class="dll-cell info">'x'</div>
+                  <div class="dll-cell ld">LD</div>
+                </div>
+
+                <!-- Flechas Bidireccionales entre 1 y 2 -->
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <span style="color: var(--accent-cyan); font-weight: 800; font-size: 0.85rem;" title="Liga Derecha (LD)">LD ➔</span>
+                  <span style="color: var(--accent-emerald); font-weight: 800; font-size: 0.85rem;" title="Liga Izquierda (LI)">⬅ LI</span>
+                </div>
+
+                <!-- Nodo 2 ('y') -->
+                <div class="dll-node" id="fig18-node-1">
+                  <div class="dll-cell li">LI</div>
+                  <div class="dll-cell info">'y'</div>
+                  <div class="dll-cell ld">LD</div>
+                </div>
+
+                <!-- Flechas Bidireccionales entre 2 y 3 -->
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <span style="color: var(--accent-cyan); font-weight: 800; font-size: 0.85rem;" title="Liga Derecha (LD)">LD ➔</span>
+                  <span style="color: var(--accent-emerald); font-weight: 800; font-size: 0.85rem;" title="Liga Izquierda (LI)">⬅ LI</span>
+                </div>
+
+                <!-- Nodo 3 ('z') -->
+                <div class="dll-node" id="fig18-node-2">
+                  <div class="dll-cell li">LI</div>
+                  <div class="dll-cell info">'z'</div>
+                  <div class="dll-cell ld">LD</div>
+                </div>
+
+                <span style="color: var(--accent-rose); font-weight: bold; font-size: 1.2rem;">➔</span>
+
+                <!-- Tierra Derecha (NULL) -->
+                <div class="ground-symbol" title="Símbolo de tierra eléctrica: Indica NULL o vacío">
+                  <svg viewBox="0 0 24 24"><path d="M12 3v10M5 13h14M8 17h8M11 21h2" stroke-width="2.5" stroke-linecap="round"/></svg>
+                  <span class="ground-text">NULL</span>
+                </div>
+              </div>
+
+              <!-- Barra de Estado Dinámico -->
+              <div id="fig18-status" style="margin-top: 1.5rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-main); text-align: center; min-height: 38px;">
+                <span class="tag-badge cyan">ESTADO</span> Lista en reposo. Usa los controles inferiores.
+              </div>
+            </div>
+
+            <!-- Botones de Control para la Exposición -->
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl btn-emerald" onclick="window.Fig18.traverseForward()">
+                ▶ Recorrer Adelante (I → D)
+              </button>
+              <button class="btn-ctrl btn-purple" onclick="window.Fig18.traverseBackward()">
+                ◀ Recorrer Atrás (D → I)
+              </button>
+              <button class="btn-ctrl" onclick="window.Fig18.reset()">
+                ↺ Reiniciar
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Explicación de los Elementos según el libro -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Elementos Clave de la Figura III.18</span>
+              <span class="tag-badge emerald">ANÁLISIS TEXTUAL</span>
+            </div>
+
+            <div class="concept-card cyan">
+              <h4>Símbolo de "Tierra" o Masa Eléctrica</h4>
+              <p>En las ciencias computacionales clásicas (representado con 3 líneas horizontales decrecientes), simboliza el valor <strong>NULL (nulo o vacío)</strong>. Indica que el primer nodo no tiene antecesor y el último no tiene sucesor.</p>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>Puntero I (Inicio / Izquierda)</h4>
+              <p>Apunta directamente al primer nodo de la lista. En pseudocódigo: <code>p = I</code> para iniciar recorridos de izquierda a derecha usando <code>p = p->LD</code>.</p>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>Puntero D (Derecho / Final)</h4>
+              <p>Apunta directamente al último nodo de la lista. Permite comenzar recorridos en orden inverso de derecha a izquierda usando <code>p = p->LI</code> de forma inmediata.</p>
+            </div>
+
+            <div class="concept-card amber">
+              <h4>Invariante de Consistencia</h4>
+              <p>Para cualquier nodo intermedio $k$:<br>
+              <code>k == k->LD->LI == k->LI->LD</code><br>
+              Esta propiedad bidireccional garantiza que nunca se pierdan enlaces en la navegación.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 4: OPERACIÓN DE AGREGAR - TEORÍA DE 4 ENLACES (PÁG 81)
+         ==================================================================== -->
+    <section class="slide" data-title="Operación de Agregar: Algoritmo">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">04 / 16</span>
+            <span class="slide-category">ALGORITMOS FUNDAMENTALES • PÁG. 81</span>
+          </div>
+          <h2 class="slide-title">Operación de Agregar: <span class="highlight">El Desafío de los 4 Punteros</span></h2>
+          <p class="slide-subtitle">La regla de oro para insertar un nuevo nodo N entre dos nodos existentes sin romper la cadena.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Lógica del Procedimiento de Inserción</span>
+              <span class="tag-badge purple">REGLA DE CONSERVACIÓN</span>
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+              A diferencia de una lista simple ligada (donde solo se modifican 2 punteros), en una lista doblemente ligada la inserción entre dos nodos existentes <strong>exige la reasignación estricta de 4 apuntadores</strong>.
+            </p>
+
+            <div class="concept-card amber">
+              <h4>¡Peligro Crítico de Memoria!</h4>
+              <p>Si se modifica prematuramente <code>A->LD = N</code> antes de guardar o conectar con <code>M</code>, <strong>se pierde el acceso a toda la lista subsiguiente</strong> (Memory Leak e inconsistencia).</p>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>Regla de Oro: "Primero conecta los nuevos, luego rompe los viejos"</h4>
+              <p>1. Conectar las ligas de <code>N</code> hacia los nodos existentes.<br>
+              2. Redirigir las ligas de los nodos existentes hacia <code>N</code>.</p>
+            </div>
+
+            <div class="concept-card cyan" style="margin-top: auto;">
+              <h4>Complejidad Computacional</h4>
+              <p>Tiempo de ejecución: <strong>$O(1)$</strong> (Tiempo constante, pues no requiere iterar si ya se tiene la referencia de inserción). Espacio: <strong>$O(1)$</strong> adicional por nodo.</p>
+            </div>
+          </div>
+
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Pseudocódigo Formal y Asignaciones</span>
+              <span class="tag-badge cyan">C / C++ EQUIVALENTE</span>
+            </div>
+
+            <div class="code-box" style="margin-bottom: 1rem;">
+              <span class="comment">// Inserción de un nuevo nodo N antes del nodo M</span><br>
+              <span class="keyword">void</span> <span class="type">insertarAntesDe</span>(<span class="type">Nodo</span>* <span class="variable">M</span>, <span class="type">TipoDato</span> <span class="variable">valor</span>) {<br>
+              &nbsp;&nbsp;<span class="type">Nodo</span>* <span class="variable">N</span> = <span class="keyword">new</span> <span class="type">Nodo</span>();<br>
+              &nbsp;&nbsp;<span class="variable">N</span>-&gt;<span class="variable">INFO</span> = <span class="variable">valor</span>;<br>
+              &nbsp;&nbsp;<span class="type">Nodo</span>* <span class="variable">A</span> = <span class="variable">M</span>-&gt;<span class="variable">LI</span>; <span class="comment">// Nodo predecesor existente</span><br><br>
+              &nbsp;&nbsp;<span class="comment">// PASO 1: Liga derecha de N apunta a M</span><br>
+              &nbsp;&nbsp;<span class="variable">N</span>-&gt;<span class="variable">LD</span> = <span class="variable">M</span>;<br><br>
+              &nbsp;&nbsp;<span class="comment">// PASO 2: Liga izquierda de N apunta a A</span><br>
+              &nbsp;&nbsp;<span class="variable">N</span>-&gt;<span class="variable">LI</span> = <span class="variable">A</span>;<br><br>
+              &nbsp;&nbsp;<span class="comment">// PASO 3: Redirigir liga derecha del nodo A hacia N</span><br>
+              &nbsp;&nbsp;<span class="variable">A</span>-&gt;<span class="variable">LD</span> = <span class="variable">N</span>;<br><br>
+              &nbsp;&nbsp;<span class="comment">// PASO 4: Redirigir liga izquierda del nodo M hacia N</span><br>
+              &nbsp;&nbsp;<span class="variable">M</span>-&gt;<span class="variable">LI</span> = <span class="variable">N</span>;<br>
+              }
+            </div>
+
+            <div style="font-size: 0.82rem; color: var(--text-dim); font-family: var(--font-mono);">
+              ✔ En la siguiente diapositiva veremos la animación visual interactiva de la Figura III.19 recreando este proceso exacto.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 5: FIGURA III.19 - SIMULACIÓN INTERACTIVA DE INSERCIÓN (PÁG 81)
+         ==================================================================== -->
+    <section class="slide" data-title="Figura III.19: Simulación de Inserción">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">05 / 16</span>
+            <span class="slide-category">SIMULACIÓN INTERACTIVA • PÁG. 81</span>
+          </div>
+          <h2 class="slide-title">Figura III.19: <span class="highlight">Reconexión de Enlaces</span></h2>
+          <p class="slide-subtitle">El nodo N desciende e integra sus ligas LD y LI rompiendo la continuidad original sin fugas de memoria.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Escenario Visual SVG Dinámico -->
+          <div class="glass-panel" style="flex: 1;">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Animador Interactivo de Punteros</span>
+              <span class="tag-badge purple">FIG. III.19 EN ACCIÓN</span>
+            </div>
+
+            <!-- Escenario interactivo SVG -->
+            <div class="visualizer-stage" style="position: relative; height: 320px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              
+              <!-- NODO SUPERIOR N (El nuevo nodo) -->
+              <div id="fig19-node-n" class="dll-node new-node" style="position: absolute; top: 25px; transition: all 0.5s ease;">
+                <div class="dll-cell li">LI</div>
+                <div class="dll-cell info" style="color: var(--accent-purple);">N</div>
+                <div class="dll-cell ld">LD</div>
+                <div class="dll-node-label" style="color: var(--accent-purple);">NUEVO NODO (N)</div>
+              </div>
+
+              <!-- Lienzo SVG con las flechas dinámicas -->
+              <svg style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;" viewBox="0 0 500 320">
+                <defs>
+                  <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L8,3 z" fill="var(--accent-cyan)"/>
+                  </marker>
+                  <marker id="arrow-emerald" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L8,3 z" fill="var(--accent-emerald)"/>
+                  </marker>
+                  <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L8,3 z" fill="var(--accent-purple)"/>
+                  </marker>
+                </defs>
+
+                <!-- Enlace Original Directo A -> M -->
+                <line id="fig19-arrow-direct" x1="190" y1="210" x2="305" y2="210" stroke="var(--accent-cyan)" stroke-width="2.5" marker-end="url(#arrow-cyan)" style="transition: opacity 0.4s;"/>
+
+                <!-- Enlace Original Inverso M -> A -->
+                <line id="fig19-arrow-direct-rev" x1="310" y1="230" x2="195" y2="230" stroke="var(--accent-emerald)" stroke-width="2.5" marker-end="url(#arrow-emerald)" style="transition: opacity 0.4s;"/>
+
+                <!-- Flecha N -> M (Paso 1: N->LD = M) -->
+                <path id="fig19-arrow-n-m" d="M 305,65 Q 360,130 360,180" fill="none" stroke="var(--accent-cyan)" stroke-width="2.5" marker-end="url(#arrow-cyan)" style="opacity: 0; transition: opacity 0.4s;"/>
+
+                <!-- Flecha N -> A (Paso 2: N->LI = A) -->
+                <path id="fig19-arrow-n-a" d="M 195,65 Q 140,130 140,180" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5" marker-end="url(#arrow-emerald)" style="opacity: 0; transition: opacity 0.4s;"/>
+
+                <!-- Flecha A -> N (Paso 3: A->LD = N) -->
+                <path id="fig19-arrow-a-n" d="M 175,185 Q 185,110 205,80" fill="none" stroke="var(--accent-purple)" stroke-width="2.5" marker-end="url(#arrow-purple)" style="opacity: 0; transition: opacity 0.4s;"/>
+
+                <!-- Flecha M -> N (Paso 4: M->LI = N) -->
+                <path id="fig19-arrow-m-n" d="M 325,185 Q 315,110 295,80" fill="none" stroke="var(--accent-purple)" stroke-width="2.5" marker-end="url(#arrow-purple)" style="opacity: 0; transition: opacity 0.4s;"/>
+              </svg>
+
+              <!-- NODOS INFERIORES DE LA LISTA ORIGINAL (A y M) -->
+              <div style="position: absolute; bottom: 35px; display: flex; gap: 7rem;">
+                <!-- Nodo Predecesor A -->
+                <div class="dll-node" id="fig19-node-a">
+                  <div class="dll-cell li">LI</div>
+                  <div class="dll-cell info">A</div>
+                  <div class="dll-cell ld">LD</div>
+                  <div class="dll-node-label">NODO A (Antecesor)</div>
+                </div>
+
+                <!-- Nodo Sucesor M -->
+                <div class="dll-node" id="fig19-node-m">
+                  <div class="dll-cell li">LI</div>
+                  <div class="dll-cell info">M</div>
+                  <div class="dll-cell ld">LD</div>
+                  <div class="dll-node-label">NODO M (Sucesor)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de Control de la Animación -->
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl" onclick="window.Fig19.prevStep()">
+                ◀ Paso Anterior
+              </button>
+              <button class="btn-ctrl btn-purple" onclick="window.Fig19.nextStep()">
+                ▶ Siguiente Paso
+              </button>
+              <button class="btn-ctrl" onclick="window.Fig19.reset()">
+                ↺ Reiniciar
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Paso a Paso Sincronizado -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Ejecución Paso a Paso</span>
+              <span class="tag-badge cyan">SINCRONIZACIÓN</span>
+            </div>
+
+            <div class="algorithm-steps">
+              <div class="algo-step-item active" id="fig19-step-0">
+                <span class="step-badge">0</span>
+                <div>
+                  <strong>Estado Inicial:</strong> Nodo N creado en memoria. Los nodos A y M permanecen conectados mutuamente.
+                </div>
+              </div>
+
+              <div class="algo-step-item" id="fig19-step-1">
+                <span class="step-badge">1</span>
+                <div>
+                  <strong>N-&gt;LD = M:</strong> La liga derecha de N desciende y apunta hacia el nodo sucesor M.
+                </div>
+              </div>
+
+              <div class="algo-step-item" id="fig19-step-2">
+                <span class="step-badge">2</span>
+                <div>
+                  <strong>N-&gt;LI = A:</strong> La liga izquierda de N desciende y apunta hacia el nodo antecesor A.
+                </div>
+              </div>
+
+              <div class="algo-step-item" id="fig19-step-3">
+                <span class="step-badge">3</span>
+                <div>
+                  <strong>A-&gt;LD = N:</strong> Se rompe el enlace directo de A hacia M y ahora sube hacia N.
+                </div>
+              </div>
+
+              <div class="algo-step-item" id="fig19-step-4">
+                <span class="step-badge">4</span>
+                <div>
+                  <strong>M-&gt;LI = N:</strong> Se rompe el enlace inverso de M hacia A y sube hacia N. ¡Inserción completada!
+                </div>
+              </div>
+            </div>
+
+            <!-- Código sincronizado en vivo -->
+            <div class="code-box" id="fig19-code" style="margin-top: 1rem;">
+              <div class="code-line highlight-line">// Estado 0: N = new Nodo('N')</div>
+              <div class="code-line">N-&gt;LD = M;</div>
+              <div class="code-line">N-&gt;LI = A;</div>
+              <div class="code-line">A-&gt;LD = N;</div>
+              <div class="code-line">M-&gt;LI = N;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 6: OPERACIÓN DE RETIRO / ELIMINACIÓN DE NODOS
+         ==================================================================== -->
+    <section class="slide" data-title="Operación de Retiro de Nodos">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">06 / 16</span>
+            <span class="slide-category">ALGORITMOS FUNDAMENTALES</span>
+          </div>
+          <h2 class="slide-title">Operación de Retiro: <span class="highlight">Bypass de Punteros</span></h2>
+          <p class="slide-subtitle">Extracción segura de un elemento conectando directamente su antecesor y sucesor sin fugas de memoria.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Simulación -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Simulador de Desconexión</span>
+              <span class="tag-badge rose">ELIMINAR NODO</span>
+            </div>
+
+            <div class="visualizer-stage" style="padding: 2rem 1rem; position: relative;">
+              <!-- 3 Nodos A, B, C -->
+              <div style="display: flex; align-items: center; justify-content: center; gap: 2.2rem; width: 100%;">
+                
+                <!-- Nodo A -->
+                <div class="dll-node" id="del-node-a">
+                  <div class="dll-cell li">LI</div>
+                  <div class="dll-cell info">A</div>
+                  <div class="dll-cell ld">LD</div>
+                  <div class="dll-node-label">NODO A</div>
+                </div>
+
+                <!-- Nodo B (Objetivo) -->
+                <div class="dll-node highlighted" id="del-node-b" style="border-color: var(--accent-rose); transition: all 0.5s ease;">
+                  <div class="dll-cell li">LI</div>
+                  <div class="dll-cell info" style="color: var(--accent-rose);">B</div>
+                  <div class="dll-cell ld">LD</div>
+                  <div class="dll-node-label" style="color: var(--accent-rose);">OBJETIVO (B)</div>
+                </div>
+
+                <!-- Nodo C -->
+                <div class="dll-node" id="del-node-c">
+                  <div class="dll-cell li">LI</div>
+                  <div class="dll-cell info">C</div>
+                  <div class="dll-cell ld">LD</div>
+                  <div class="dll-node-label">NODO C</div>
+                </div>
+              </div>
+
+              <!-- Enlaces SVG de bypass arqueados -->
+              <svg style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;" viewBox="0 0 500 240">
+                <!-- Flecha de bypass A -> C por arriba -->
+                <path id="del-arrow-bypass-fwd" d="M 180,90 Q 250,20 320,90" fill="none" stroke="var(--accent-cyan)" stroke-width="3" marker-end="url(#arrow-cyan)" style="opacity: 0; transition: opacity 0.5s; stroke-dasharray: 6 3;"/>
+                <!-- Flecha de bypass C -> A por abajo -->
+                <path id="del-arrow-bypass-rev" d="M 320,150 Q 250,220 180,150" fill="none" stroke="var(--accent-emerald)" stroke-width="3" marker-end="url(#arrow-emerald)" style="opacity: 0; transition: opacity 0.5s; stroke-dasharray: 6 3;"/>
+              </svg>
+
+              <!-- Estado de eliminación -->
+              <div id="del-status" style="position: absolute; bottom: 15px; font-family: var(--font-mono); font-size: 0.8rem; text-align: center;">
+                <span class="tag-badge cyan">ESTADO</span> Nodo B activo en medio de la lista.
+              </div>
+            </div>
+
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl btn-danger" onclick="window.DeleteSim.toggleDelete()">
+                ⚡ Alternar Eliminación de B
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Lógica y Casos Especiales -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Mecánica del Algoritmo</span>
+              <span class="tag-badge emerald">GESTIÓN DE EXCEPCIONES</span>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>El Puenteo de Punteros (2 Asignaciones)</h4>
+              <p>1. El antecesor apunta al sucesor: <code>B->LI->LD = B->LD;</code><br>
+              2. El sucesor apunta al antecesor: <code>B->LD->LI = B->LI;</code><br>
+              3. Liberación de memoria física: <code>delete B;</code> o <code>free(B);</code></p>
+            </div>
+
+            <div class="concept-card amber">
+              <h4>Casos de Frontera Críticos</h4>
+              <p>• <strong>Eliminar el Primer Nodo (B == I):</strong> Se debe actualizar el puntero externo de inicio: <code>I = B->LD; I->LI = NULL;</code><br>
+              • <strong>Eliminar el Último Nodo (B == D):</strong> Se actualiza el puntero de cola: <code>D = B->LI; D->LD = NULL;</code><br>
+              • <strong>Lista de 1 solo nodo:</strong> <code>I = NULL; D = NULL;</code></p>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>Ventaja Suprema vs Lista Simple</h4>
+              <p>En una lista simple, para eliminar el nodo B se debe forzosamente recorrer desde el inicio para ubicar al antecesor A ($O(n)$). En la doblemente ligada, como <strong>B ya conoce a su antecesor mediante B-&gt;LI</strong>, ¡el retiro es estrictamente $O(1)$!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 7: FIGURA III.20 - LISTA CIRCULAR CON CABEZA (PÁG 82)
+         ==================================================================== -->
+    <section class="slide" data-title="Figura III.20: Lista Circular con Cabeza">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">07 / 16</span>
+            <span class="slide-category">TOPOLOGÍA CIRCULAR • PÁG. 82</span>
+          </div>
+          <h2 class="slide-title">Figura III.20: <span class="highlight">Lista Circular con Nodo Cabeza</span></h2>
+          <p class="slide-subtitle">Estructura en anillo cerrado de 8 nodos rectangulares sin punteros nulos y centinela sombreado diagonalmente.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Representación Circular SVG -->
+          <div class="glass-panel" style="flex: 1; align-items: center; justify-content: center;">
+            <div class="glass-panel-header" style="width: 100%;">
+              <span class="glass-panel-title">Anillo Circular de 8 Nodos (Fig. III.20)</span>
+              <span class="tag-badge purple">CIRCUITO CERRADO</span>
+            </div>
+
+            <div class="visualizer-stage" style="width: 100%; height: 320px; position: relative;">
+              <!-- Puntero Externo 'p' apuntando al nodo cabeza -->
+              <div style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-weight: 800; color: var(--accent-purple); font-size: 0.95rem; z-index: 20;">
+                Apuntador externo (p) ➔
+              </div>
+
+              <!-- Anillo rotatorio de 8 nodos -->
+              <div id="fig20-ring-nodes" style="width: 250px; height: 250px; position: relative; border-radius: 50%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);">
+                
+                <!-- Nodo Cabeza (Centinela) Sombreado con Diagonales -->
+                <div class="shading-pattern" style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); width: 62px; height: 36px; border: 2px solid var(--accent-purple); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.7rem; font-weight: bold; color: #fff; box-shadow: var(--glow-purple);" title="Nodo cabeza (Header node) sombreado diagonalmente">
+                  CABEZA
+                </div>
+
+                <!-- 7 Nodos restantes del círculo -->
+                <div class="dll-node" style="position: absolute; top: 15%; right: 5%; transform: translate(0, 0); width: 48px; height: 32px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.75rem;">N1</div></div>
+                <div class="dll-node" style="position: absolute; top: 50%; right: -5%; transform: translateY(-50%); width: 48px; height: 32px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.75rem;">N2</div></div>
+                <div class="dll-node" style="position: absolute; bottom: 15%; right: 5%; width: 48px; height: 32px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.75rem;">N3</div></div>
+                <div class="dll-node" style="position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 48px; height: 32px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.75rem;">N4</div></div>
+                <div class="dll-node" style="position: absolute; bottom: 15%; left: 5%; width: 48px; height: 32px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.75rem;">N5</div></div>
+                <div class="dll-node" style="position: absolute; top: 50%; left: -5%; transform: translateY(-50%); width: 48px; height: 32px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.75rem;">N6</div></div>
+                <div class="dll-node" style="position: absolute; top: 15%; left: 5%; width: 48px; height: 32px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.75rem;">N7</div></div>
+
+                <!-- Flechas circulares animadas SVG en el interior -->
+                <svg style="position: absolute; inset: 0; width: 100%; height: 100%;" viewBox="0 0 250 250">
+                  <circle cx="125" cy="125" r="95" fill="none" stroke="rgba(56, 189, 248, 0.25)" stroke-width="2" stroke-dasharray="6 4" class="pointer-line"/>
+                  <circle cx="125" cy="125" r="80" fill="none" stroke="rgba(16, 185, 129, 0.25)" stroke-width="2" stroke-dasharray="6 4" class="pointer-line-reverse"/>
+                </svg>
+              </div>
+
+              <!-- Estado -->
+              <div id="fig20-status" style="position: absolute; bottom: 8px; font-family: var(--font-mono); font-size: 0.78rem; text-align: center;">
+                <span class="tag-badge purple">CIRCULAR</span> Circuito continuo cerrado. No existen extremos con NULL.
+              </div>
+            </div>
+
+            <!-- Controles -->
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl btn-purple" onclick="window.Fig20.rotateRing()">
+                ↻ Avanzar 1 Paso
+              </button>
+              <button class="btn-ctrl" id="fig20-btn-auto" onclick="window.Fig20.toggleContinuousRun()">
+                ▶ Auto Recorrido
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Características Conceptuales -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">El Rol del Nodo Centinela (Cabeza)</span>
+              <span class="tag-badge cyan">INGENIERÍA DE SOFTWARE</span>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>El Nodo Cabeza Sombreado con Diagonales</h4>
+              <p>En el dibujo de la pág. 82, destaca porque su área de datos está achurada. No almacena información de usuario; actúa como <strong>punto de referencia permanente o ancla</strong> señalado por el puntero <code>p</code>.</p>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>Eliminación Total de Casos Especiales</h4>
+              <p>Al no existir punteros apuntando a NULL (tierra), <strong>las funciones de inserción y borrado jamás tienen que verificar <code>if (p == NULL)</code></strong> para los extremos. Todo nodo tiene garantizado un antecesor y un sucesor válidos.</p>
+            </div>
+
+            <div class="concept-card cyan">
+              <h4>Comportamiento en Lista Vacía</h4>
+              <p>Cuando la lista no contiene elementos de usuario, el nodo cabeza se apunta a sí mismo en ambas direcciones:<br>
+              <code>cabeza->LD = cabeza;</code> y <code>cabeza->LI = cabeza;</code></p>
+            </div>
+
+            <div class="concept-card amber">
+              <h4>Aplicaciones en Sistemas Operativos</h4>
+              <p>Planificadores de procesos (Round-Robin Scheduling), buffers circulares de audio/video y reproductores multimedia en bucle infinito.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 8: ALMACENAMIENTO CONTIGUO VS LIGADO (PÁGS 82 - 83)
+         ==================================================================== -->
+    <section class="slide" data-title="Almacenamiento Contiguo vs Ligado">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">08 / 16</span>
+            <span class="slide-category">COMPARATIVA ARQUITECTÓNICA • PÁGS. 82-83</span>
+          </div>
+          <h2 class="slide-title">Memoria <span class="highlight">Contigua (Arreglos)</span> vs <span class="highlight" style="background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Ligada (Listas)</span></h2>
+          <p class="slide-subtitle">La pausa teórica del libro: por qué las listas transforman la gestión de grandes volúmenes de datos dinámicos.</p>
+        </div>
+
+        <div class="slide-body grid-2col-equal">
+          <!-- Tarjeta Almacenamiento Contiguo -->
+          <div class="glass-panel" style="border-top: 3px solid var(--accent-amber);">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title" style="color: var(--accent-amber);">Almacenamiento Contiguo (Arreglos / Arrays)</span>
+              <span class="tag-badge amber">BLOQUES PLANOS</span>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 0.8rem; margin-bottom: 1rem; display: flex; gap: 4px; justify-content: center;">
+              <div style="background: rgba(245, 158, 11, 0.2); border: 1px solid var(--accent-amber); padding: 8px 12px; font-family: var(--font-mono); font-size: 0.8rem; border-radius: 4px;">[0]: A</div>
+              <div style="background: rgba(245, 158, 11, 0.2); border: 1px solid var(--accent-amber); padding: 8px 12px; font-family: var(--font-mono); font-size: 0.8rem; border-radius: 4px;">[1]: B</div>
+              <div style="background: rgba(245, 158, 11, 0.2); border: 1px solid var(--accent-amber); padding: 8px 12px; font-family: var(--font-mono); font-size: 0.8rem; border-radius: 4px;">[2]: C</div>
+              <div style="background: rgba(245, 158, 11, 0.2); border: 1px solid var(--accent-amber); padding: 8px 12px; font-family: var(--font-mono); font-size: 0.8rem; border-radius: 4px;">[3]: D</div>
+            </div>
+
+            <div class="concept-card amber">
+              <h4>Inserción y Retiro Costosos: $O(n)$</h4>
+              <p>Para insertar un elemento en medio, es obligatorio <strong>desplazar físicamente en memoria</strong> todos los elementos posteriores una posición a la derecha. Si hay un millón de registros, se deben mover un millón de celdas.</p>
+            </div>
+
+            <div class="concept-card amber">
+              <h4>Tamaño Fijo / Reubicación Masiva</h4>
+              <p>Requiere declarar un tamaño estático inicial o realizar realocaciones de bloques completos cuando se agota el espacio (<code>realloc</code>).</p>
+            </div>
+
+            <div class="concept-card">
+              <h4>Ventaja: Acceso Indexado Inmediato $O(1)$</h4>
+              <p>Cálculo de dirección instantáneo mediante aritmética de punteros: <code>dir = base + (i * tamaño)</code>.</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta Almacenamiento Ligado -->
+          <div class="glass-panel" style="border-top: 3px solid var(--accent-cyan);">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title" style="color: var(--accent-cyan);">Almacenamiento Ligado (Listas & Punteros)</span>
+              <span class="tag-badge cyan">DINAMISMO PURO</span>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 0.8rem; margin-bottom: 1rem; display: flex; gap: 8px; align-items: center; justify-content: center;">
+              <div style="background: rgba(56, 189, 248, 0.2); border: 1px solid var(--accent-cyan); padding: 6px 10px; font-family: var(--font-mono); font-size: 0.75rem; border-radius: 4px;">Nodo A</div>
+              <span style="color: var(--accent-cyan);">⇄</span>
+              <div style="background: rgba(56, 189, 248, 0.2); border: 1px solid var(--accent-cyan); padding: 6px 10px; font-family: var(--font-mono); font-size: 0.75rem; border-radius: 4px;">Nodo B</div>
+              <span style="color: var(--accent-cyan);">⇄</span>
+              <div style="background: rgba(56, 189, 248, 0.2); border: 1px solid var(--accent-cyan); padding: 6px 10px; font-family: var(--font-mono); font-size: 0.75rem; border-radius: 4px;">Nodo C</div>
+            </div>
+
+            <div class="concept-card cyan">
+              <h4>Inserción y Retiro Eficientes: $O(1)$</h4>
+              <p>No se mueve ningún elemento en memoria. Solo se cambian 4 punteros. No importa si la lista tiene diez o diez millones de nodos, la operación toma exactamente los mismos nanosegundos.</p>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>Flexibilidad Total en Tiempo de Ejecución</h4>
+              <p>La estructura crece y decrece de nodo en nodo bajo demanda estricta; no requiere reservar bloques gigantes continuos de memoria.</p>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>Desventaja: Sobrecarga de Espacio & Acceso Secuencial</h4>
+              <p>Cada nodo almacena 2 punteros adicionales. No permite indexación directa aleatoria (se debe avanzar con <code>p = p->LD</code>).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 9: TEORÍA DE COLAS Y DISCIPLINA PEPS / FIFO (PÁGS 82 - 83)
+         ==================================================================== -->
+    <section class="slide" data-title="Colas y Disciplina PEPS / FIFO">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">09 / 16</span>
+            <span class="slide-category">TEORÍA DE LÍNEAS DE ESPERA • PÁGS. 82-83</span>
+          </div>
+          <h2 class="slide-title">Colas (Queues): <span class="highlight">Disciplina PEPS / FIFO</span></h2>
+          <p class="slide-subtitle">El principio rector de las líneas de espera: Primeras Entradas, Primeras Salidas (First In, First Out).</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Mecánica de la Cola</span>
+              <span class="tag-badge emerald">PEPS / FIFO</span>
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+              Una cola simula de manera exacta una fila física de personas esperando atención para un servicio. La disciplina es estricta: <strong>el primer elemento en formarse es el primero en ser despachado</strong>.
+            </p>
+
+            <div class="concept-card emerald">
+              <h4>Extremo Frente (Inicio / I / Front)</h4>
+              <p>Por este extremo se realiza la operación <strong>Desencolar (Dequeue / Retiro)</strong>. El elemento que llegó primero es atendido y abandona la cola.</p>
+            </div>
+
+            <div class="concept-card cyan">
+              <h4>Extremo Final (Derecho / D / Rear)</h4>
+              <p>Por este extremo se realiza la operación <strong>Encolar (Enqueue / Inserción)</strong>. Todo nuevo elemento entrante se coloca estrictamente al final.</p>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>¿Por qué usar Listas Dobles para Colas?</h4>
+              <p>Permite mantener punteros tanto al Frente como al Final, garantizando que tanto la inserción como la extracción se realicen en <strong>$O(1)$</strong> sin necesidad de recorrer la cola.</p>
+            </div>
+          </div>
+
+          <div class="glass-panel" style="justify-content: center; align-items: center;">
+            <div class="glass-panel-header" style="width: 100%;">
+              <span class="glass-panel-title">Diagrama Operativo de una Cola</span>
+              <span class="tag-badge cyan">FLUJO LINEAL</span>
+            </div>
+
+            <!-- Representación visual de Cola -->
+            <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; margin: 1.5rem 0;">
+              
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 480px;">
+                <span class="tag-badge emerald">SALIDA (Desencolar) ←</span>
+                <span class="tag-badge cyan">← ENTRADA (Encolar)</span>
+              </div>
+
+              <!-- Tubo / Línea de Cola -->
+              <div style="display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); border: 2px dashed rgba(255,255,255,0.2); padding: 1rem 1.5rem; border-radius: 12px; min-width: 380px; justify-content: center;">
+                <div class="client-token" style="background: linear-gradient(135deg, var(--accent-emerald), #059669);">C1</div>
+                <span style="color: var(--text-dim);">←</span>
+                <div class="client-token">C2</div>
+                <span style="color: var(--text-dim);">←</span>
+                <div class="client-token">C3</div>
+                <span style="color: var(--text-dim);">←</span>
+                <div class="client-token" style="background: linear-gradient(135deg, var(--accent-cyan), #2563eb);">C4</div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; width: 100%; max-width: 480px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim);">
+                <span>Frente (Primer llegado)</span>
+                <span>Final (Último llegado)</span>
+              </div>
+            </div>
+
+            <div class="code-box" style="width: 100%;">
+              <span class="keyword">void</span> <span class="type">encolar</span>(<span class="variable">dato</span>) { <span class="comment">/* Inserta en D en O(1) */</span> }<br>
+              <span class="type">TipoDato</span> <span class="variable">desencolar</span>() { <span class="comment">/* Extrae de I en O(1) */</span> }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 10: MODELOS DE COLAS I - SERVIDORES EN CASCADA (PÁG 83)
+         ==================================================================== -->
+    <section class="slide" data-title="Modelos de Colas: Cascada y Servidor Único">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">10 / 16</span>
+            <span class="slide-category">MODELADO DE SISTEMAS • PÁG. 83</span>
+          </div>
+          <h2 class="slide-title">Modelos de Colas: <span class="highlight">Servidor Único vs Cascada</span></h2>
+          <p class="slide-subtitle">Recreación interactiva de las gráficas (a) y (b) de la página 83 del texto oficial.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Simulador de Modelo a y b -->
+          <div class="glass-panel" style="flex: 1;">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Simulador Dinámico de Flujo</span>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn-ctrl tab-qmodel active" data-model="a" onclick="window.QueueModels.setModel('a')">Modelo (a)</button>
+                <button class="btn-ctrl tab-qmodel" data-model="b" onclick="window.QueueModels.setModel('b')">Modelo (b)</button>
+              </div>
+            </div>
+
+            <div class="visualizer-stage" style="padding: 1.5rem; flex-direction: column;">
+              
+              <!-- Vista Modelo (a): Un solo servidor y una sola cola -->
+              <div id="qmodel-view-a" class="qmodel-view" style="display: flex; align-items: center; justify-content: center; gap: 2rem; width: 100%;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px;">COLA DE ESPERA</span>
+                  <div class="queue-track" style="min-width: 140px; min-height: 48px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent-cyan); border-radius: 8px; display: flex; align-items: center; gap: 6px; padding: 4px 8px;">
+                    <div class="client-token">C1</div>
+                    <div class="client-token">C2</div>
+                  </div>
+                </div>
+
+                <span style="color: var(--accent-cyan); font-weight: 800; font-size: 1.5rem;">➔</span>
+
+                <!-- Servidor S1 -->
+                <div class="server-box" id="s1-a">
+                  <span>[ S1 ]</span>
+                  <span class="server-status">DISPONIBLE</span>
+                </div>
+              </div>
+
+              <!-- Vista Modelo (b): Varios servidores diferentes y una sola cola (Pipeline) -->
+              <div id="qmodel-view-b" class="qmodel-view" style="display: none; align-items: center; justify-content: center; gap: 1rem; width: 100%;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px;">COLA ÚNICA</span>
+                  <div class="queue-track" style="min-width: 90px; min-height: 48px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent-cyan); border-radius: 8px; display: flex; align-items: center; gap: 4px; padding: 4px 6px;">
+                    <div class="client-token">C1</div>
+                  </div>
+                </div>
+
+                <span style="color: var(--accent-cyan); font-size: 1.2rem;">➔</span>
+                <div class="server-box" id="s1-b"><span>[ S1 ]</span><span class="server-status">LIBRE</span></div>
+                <span style="color: var(--accent-cyan); font-size: 1.2rem;">➔</span>
+                <div class="server-box" id="s2-b"><span>[ S2 ]</span><span class="server-status">LIBRE</span></div>
+                <span style="color: var(--accent-cyan); font-size: 1.2rem;">➔</span>
+                <div class="server-box" id="s3-b"><span>[ S3 ]</span><span class="server-status">LIBRE</span></div>
+              </div>
+            </div>
+
+            <!-- Controles de simulación -->
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl btn-emerald" onclick="window.QueueModels.addClient()">
+                + Agregar Cliente a Cola
+              </button>
+              <button class="btn-ctrl btn-purple" onclick="window.QueueModels.serveClient()">
+                ⚙ Procesar Servicio
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Explicación de los Modelos (a) y (b) -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Análisis de los Modelos Teóricos</span>
+              <span class="tag-badge cyan">DESCRIPCIÓN TEXTUAL</span>
+            </div>
+
+            <div id="qmodel-description" style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+              <strong>Modelo a) Un solo servidor y una sola cola (Pág. 83):</strong> Una flecha lineal simple que pasa por una posición de espera y entra directamente a un rectángulo etiquetado como [ S1 ].
+            </div>
+
+            <div class="concept-card cyan">
+              <h4>a) Un Solo Servidor y Una Sola Cola</h4>
+              <p>El esquema elemental de colas (M/M/1). Ejemplos: un cajero automático aislado, una ventanilla única de atención o un procesador monocore despachando hilos.</p>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>b) Varios Servidores Diferentes y Una Sola Cola (Cascada / Pipeline)</h4>
+              <p>Línea de espera secuencial donde cada usuario debe atravesar obligatoriamente varias etapas consecutivas <code>[S1] ➔ [S2] ➔ [S3]</code>. Ejemplo: revisión médica, trámites aduanales o líneas de ensamblaje industrial.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 11: MODELOS DE COLAS II - PARALELOS Y MATRICIALES (PÁG 84)
+         ==================================================================== -->
+    <section class="slide" data-title="Modelos de Colas: Paralelos y Matriciales">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">11 / 16</span>
+            <span class="slide-category">MODELADO DE SISTEMAS • PÁG. 84</span>
+          </div>
+          <h2 class="slide-title">Modelos de Colas: <span class="highlight">Paralelo vs Matricial</span></h2>
+          <p class="slide-subtitle">Recreación interactiva de las gráficas (c) y (d) de la página 84 del texto oficial.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Simulador de Modelo c y d -->
+          <div class="glass-panel" style="flex: 1;">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Simulador Multicanal</span>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn-ctrl tab-qmodel active" data-model="c" onclick="window.QueueModels.setModel('c')">Modelo (c)</button>
+                <button class="btn-ctrl tab-qmodel" data-model="d" onclick="window.QueueModels.setModel('d')">Modelo (d)</button>
+              </div>
+            </div>
+
+            <div class="visualizer-stage" style="padding: 1.5rem; flex-direction: column;">
+              
+              <!-- Vista Modelo (c): Varios servidores iguales y varias colas -->
+              <div id="qmodel-view-c" class="qmodel-view" style="display: flex; flex-direction: column; gap: 1rem; width: 100%; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                  <div class="queue-track" style="min-width: 100px; min-height: 40px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent-cyan); border-radius: 6px; display: flex; align-items: center; gap: 4px; padding: 2px 6px;"><div class="client-token">C1</div></div>
+                  <span style="color: var(--accent-cyan);">➔</span>
+                  <div class="server-box" style="height: 48px;">[ S1 ]<span class="server-status">LIBRE</span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                  <div class="queue-track" style="min-width: 100px; min-height: 40px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent-cyan); border-radius: 6px; display: flex; align-items: center; gap: 4px; padding: 2px 6px;"><div class="client-token">C2</div></div>
+                  <span style="color: var(--accent-cyan);">➔</span>
+                  <div class="server-box" style="height: 48px;">[ S2 ]<span class="server-status">LIBRE</span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                  <div class="queue-track" style="min-width: 100px; min-height: 40px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent-cyan); border-radius: 6px; display: flex; align-items: center; gap: 4px; padding: 2px 6px;"><div class="client-token">C3</div></div>
+                  <span style="color: var(--accent-cyan);">➔</span>
+                  <div class="server-box" style="height: 48px;">[ S3 ]<span class="server-status">LIBRE</span></div>
+                </div>
+              </div>
+
+              <!-- Vista Modelo (d): Varios servidores diferentes y varias colas (Matricial) -->
+              <div id="qmodel-view-d" class="qmodel-view" style="display: none; flex-direction: column; gap: 0.8rem; width: 100%; align-items: center;">
+                <!-- Fila 1 -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;">
+                  <div class="queue-track" style="width: 70px; height: 35px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent-cyan); border-radius: 4px; display: flex; align-items: center; padding: 2px;"><div class="client-token" style="width: 22px; height: 22px; font-size: 0.6rem;">C1</div></div>
+                  <span>➔</span>
+                  <div class="server-box" style="width: 60px; height: 35px; font-size: 0.75rem;">[S1]</div>
+                  <span>➔</span>
+                  <div class="server-box" style="width: 60px; height: 35px; font-size: 0.75rem;">[S2]</div>
+                  <span>➔</span>
+                  <div class="server-box" style="width: 60px; height: 35px; font-size: 0.75rem;">[S3]</div>
+                </div>
+                <!-- Fila 2 -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;">
+                  <div class="queue-track" style="width: 70px; height: 35px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent-cyan); border-radius: 4px; display: flex; align-items: center; padding: 2px;"><div class="client-token" style="width: 22px; height: 22px; font-size: 0.6rem;">C2</div></div>
+                  <span>➔</span>
+                  <div class="server-box" style="width: 60px; height: 35px; font-size: 0.75rem;">[S'1]</div>
+                  <span>➔</span>
+                  <div class="server-box" style="width: 60px; height: 35px; font-size: 0.75rem;">[S'2]</div>
+                  <span>➔</span>
+                  <div class="server-box" style="width: 60px; height: 35px; font-size: 0.75rem;">[S'3]</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Controles -->
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl btn-emerald" onclick="window.QueueModels.addClient()">
+                + Agregar Cliente
+              </button>
+              <button class="btn-ctrl btn-purple" onclick="window.QueueModels.serveClient()">
+                ⚙ Despachar Clientes
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Explicación -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Modelos Matriciales & Multicanal</span>
+              <span class="tag-badge emerald">TOPOLOGÍA PÁG 84</span>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>c) Varios Servidores Iguales y Varias Colas</h4>
+              <p>Muestra tres líneas de flujo totalmente independientes y paralelas hacia servidores con idéntica capacidad. El cliente elige su propia cola (ejemplo clásico: <strong>las cajas de cobro de un supermercado convencional</strong>).</p>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>d) Varios Servidores Diferentes y Varias Colas (Matriz)</h4>
+              <p>Modelo matricial complejo: múltiples flujos paralelos independientes, donde cada uno debe transitar obligatoriamente por 3 servidores secuenciales especializados: <code>[ S1 ] ➔ [ S2 ] ➔ [ S3 ]</code>.</p>
+            </div>
+
+            <div class="concept-card amber">
+              <h4>Optimización y Teoría de Colas</h4>
+              <p>El balanceo de carga y los cuellos de botella (bottlenecks) dependen de la tasa de servicio $(\mu)$ y la tasa de llegada $(\lambda)$ según la fórmula de Little: $L = \lambda W$.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 12: ESTRUCTURA DE PILA - PROBLEMA 2 (PÁG 86)
+         ==================================================================== -->
+    <section class="slide" data-title="Estructura de una Pila (Problema 2)">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">12 / 16</span>
+            <span class="slide-category">PROBLEMAS PRÁCTICOS • PÁG. 86</span>
+          </div>
+          <h2 class="slide-title">Problema 2: <span class="highlight">Estructura Vertical de una Pila</span></h2>
+          <p class="slide-subtitle">Comportamiento LIFO / UEPS: Casillas verticales, puntero TOPE y fondo conectado al símbolo de tierra (NULL).</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Simulador de Pila Vertical -->
+          <div class="glass-panel" style="flex: 1;">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Simulador de Pila Vertical (Pág. 86)</span>
+              <span class="tag-badge purple">LIFO / UEPS</span>
+            </div>
+
+            <div class="visualizer-stage" style="padding: 1.5rem; position: relative;">
+              
+              <!-- Flechas de entrada / salida en el tope superior -->
+              <div style="position: absolute; top: 12px; display: flex; align-items: center; gap: 2rem; font-family: var(--font-mono); font-size: 0.78rem;">
+                <span style="color: var(--accent-emerald);">↓ PUSH (Entrada)</span>
+                <span style="color: var(--accent-rose);">↑ POP (Salida)</span>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 1.5rem; margin-top: 2rem;">
+                <!-- Contenedor vertical de casillas -->
+                <div style="width: 170px; min-height: 200px; border-left: 3px solid var(--accent-cyan); border-right: 3px solid var(--accent-cyan); border-bottom: 3px solid var(--accent-cyan); border-radius: 0 0 10px 10px; padding: 6px; display: flex; flex-direction: column; justify-content: flex-end; background: rgba(0,0,0,0.3);">
+                  
+                  <!-- Casillas dinámicas generadas por JS -->
+                  <div id="stack-items-container" style="display: flex; flex-direction: column;"></div>
+                </div>
+
+                <!-- Puntero TOPE -->
+                <div id="stack-tope-pointer" style="font-family: var(--font-mono); font-weight: 800; color: var(--accent-cyan); font-size: 0.9rem;">
+                  → TOPE
+                </div>
+              </div>
+
+              <!-- Símbolo de tierra en el fondo inferior -->
+              <div style="position: absolute; bottom: 8px; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="ground-symbol" style="width: 24px; height: 24px;">
+                  <svg viewBox="0 0 24 24"><path d="M12 3v10M5 13h14M8 17h8M11 21h2" stroke-width="2.5" stroke-linecap="round"/></svg>
+                </div>
+                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-rose);">Fondo = NULL (Tierra)</span>
+              </div>
+            </div>
+
+            <!-- Controles PUSH / POP -->
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl btn-emerald" onclick="window.StackSim.push()">
+                📥 PUSH (Apilar)
+              </button>
+              <button class="btn-ctrl btn-danger" onclick="window.StackSim.pop()">
+                📤 POP (Desapilar)
+              </button>
+            </div>
+            <div id="stack-status" style="font-family: var(--font-mono); font-size: 0.78rem; text-align: center; margin-top: 0.5rem;">
+              <span class="tag-badge purple">LIFO / UEPS</span> Elementos entran y salen exclusivamente por el TOPE.
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Explicación de la Gráfica del Problema 2 -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Detalles Gráficos de la Pág. 86</span>
+              <span class="tag-badge cyan">DESGLOSE TÉCNICO</span>
+            </div>
+
+            <div class="concept-card purple">
+              <h4>El Principio UEPS (LIFO)</h4>
+              <p><strong>Últimas Entradas, Primeras Salidas (Last In, First Out).</strong> El elemento más reciente introducido en la pila es el primero absoluto en ser desalojado.</p>
+            </div>
+
+            <div class="concept-card cyan">
+              <h4>El Apuntador Externo TOPE (Top)</h4>
+              <p>Señala invariablemente al nodo ubicado en la cúspide de la pila. Al hacer PUSH, el puntero sube; al hacer POP, desciende al nodo predecesor.</p>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>Fondo con Símbolo de Tierra (NULL)</h4>
+              <p>El nodo inferior almacena un puntero nulo o tierra en su base, impidiendo desbordamientos negativos (Stack Underflow) cuando la pila se vacía completamente.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 13: TRANSFORMACIÓN COMPLEJA & NOTACIÓN POLACA (PÁGS 87)
+         ==================================================================== -->
+    <section class="slide" data-title="Transformación Compleja y Notación Polaca">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">13 / 16</span>
+            <span class="slide-category">PROBLEMAS PRÁCTICOS • PÁG. 87</span>
+          </div>
+          <h2 class="slide-title">Problemas 3 y 4: <span class="highlight">Transformación & Notación Polaca</span></h2>
+          <p class="slide-subtitle">Topología compleja con lazo envolvente 'a' y evaluación de expresiones en notación postfija con pila.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Problema 3 - Gráfica con Arcos y Lazo 'a' -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Problema 3: Lista con Arcos & Lazo Cíclico 'a'</span>
+              <button class="btn-ctrl" onclick="window.ComplexList.traceFlow()">⚡ Rastrear Flujo</button>
+            </div>
+
+            <div class="visualizer-stage" style="padding: 1.5rem; position: relative;">
+              <!-- Nodos contiguos horizontales -->
+              <div style="display: flex; gap: 8px; z-index: 10;">
+                <div class="complex-node-box dll-node" style="width: 70px; height: 60px; grid-template-columns: 1fr;">
+                  <div class="dll-cell info" style="font-size: 0.85rem;">[0]</div>
+                  <div class="dll-node-label" style="top: -20px; color: var(--accent-cyan);">TOPE</div>
+                </div>
+                <div class="complex-node-box dll-node" style="width: 70px; height: 60px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.85rem;">[1]</div></div>
+                <div class="complex-node-box dll-node" style="width: 70px; height: 60px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.85rem;">[2]</div></div>
+                <div class="complex-node-box dll-node" style="width: 70px; height: 60px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.85rem;">[3]</div></div>
+                <div class="complex-node-box dll-node" style="width: 70px; height: 60px; grid-template-columns: 1fr;"><div class="dll-cell info" style="font-size: 0.85rem;">[4]</div></div>
+              </div>
+
+              <!-- SVG con los arcos que saltan nodos vecinos y el gran bucle envolvente 'a' -->
+              <svg style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;" viewBox="0 0 450 200">
+                <!-- Arcos saltantes -->
+                <path class="complex-jump-arrow" d="M 65,70 Q 140,15 215,70" fill="none" stroke="var(--accent-cyan)" stroke-width="2.5" marker-end="url(#arrow-cyan)"/>
+                <path class="complex-jump-arrow" d="M 215,70 Q 290,15 365,70" fill="none" stroke="var(--accent-cyan)" stroke-width="2.5" marker-end="url(#arrow-cyan)"/>
+                
+                <!-- Gran lazo envolvente ovalado etiquetado como 'a' que regresa al inicio -->
+                <path id="complex-loop-a" d="M 370,130 C 440,210 20,210 55,130" fill="none" stroke="var(--accent-purple)" stroke-width="3" stroke-dasharray="6 3" marker-end="url(#arrow-purple)"/>
+                <text x="215" y="195" fill="var(--accent-purple)" font-family="var(--font-mono)" font-weight="bold" font-size="14">Lazo Cíclico 'a'</text>
+              </svg>
+            </div>
+
+            <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-top: 0.5rem;">
+              <strong>Descripción del libro (Pág. 87):</strong> Nodos en memoria contigua donde los punteros dibujan arcos que saltan sobre nodos vecinos y un gran lazo ovalado <code>a</code> envuelve la estructura desde el último hasta el primer elemento.
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Problema 4 - Notación Polaca Sufija -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Problema 4: Notación Polaca Sufija</span>
+              <span class="tag-badge emerald">EVALUACIÓN CON PILA</span>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 0.8rem; margin-bottom: 0.8rem; font-family: var(--font-mono); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center;">
+              <span>Expresión: <code>5 3 + 2 *</code></span>
+              <span class="tag-badge cyan">Token actual: <strong id="postfix-current-token">5</strong></span>
+            </div>
+
+            <!-- Pila de evaluación -->
+            <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 0.8rem;">
+              <div style="width: 100px; height: 130px; border: 2px solid var(--accent-cyan); border-radius: 6px; padding: 4px; display: flex; flex-direction: column; justify-content: flex-end;" id="postfix-stack-view">
+                <!-- Se llena con JS -->
+              </div>
+              <div id="postfix-desc" style="flex: 1; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+                <span class="tag-badge cyan">PASO 1</span> Leer operando '5' → Se apila en la pila.
+              </div>
+            </div>
+
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl btn-emerald" onclick="window.PostfixDemo.next()">
+                ▶ Siguiente Paso de Pila
+              </button>
+              <button class="btn-ctrl" onclick="window.PostfixDemo.reset()">
+                ↺ Reiniciar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 14: SIMULACIÓN DE GASOLINERA - PROBLEMA 6 (PÁG 88)
+         ==================================================================== -->
+    <section class="slide" data-title="Simulación Práctica de Gasolinera">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">14 / 16</span>
+            <span class="slide-category">CASO DE ESTUDIO REAL • PÁG. 88</span>
+          </div>
+          <h2 class="slide-title">Problema 6: <span class="highlight">Simulación de una Gasolinera</span></h2>
+          <p class="slide-subtitle">Modelado computacional de líneas de espera concurrentes: Carga de gasolina, agua, aceite y cobro.</p>
+        </div>
+
+        <div class="slide-body grid-2col">
+          <!-- Columna Izquierda: Simulador interactivo en tiempo real -->
+          <div class="glass-panel" style="flex: 1;">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Simulador de Eventos Discretos</span>
+              <span class="tag-badge cyan">SIMULACIÓN EN VIVO</span>
+            </div>
+
+            <div class="visualizer-stage" style="padding: 1rem; flex-direction: column; gap: 1rem;">
+              <!-- Fila de Vehículos en Espera -->
+              <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                <span style="font-size: 0.72rem; color: var(--text-dim); margin-bottom: 4px;">COLA DE VEHÍCULOS (Llegadas Aleatorias)</span>
+                <div id="gas-cars-queue" style="min-height: 44px; width: 100%; max-width: 380px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent-cyan); border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 4px;">
+                  <!-- Carritos generados con JS -->
+                </div>
+              </div>
+
+              <!-- Estaciones de Servicio Concurrentes -->
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; width: 100%; max-width: 440px;">
+                <div class="server-box" style="width: auto; height: 55px; border-color: var(--accent-emerald);">
+                  <span style="font-size: 0.75rem;">⛽ Bomba</span>
+                  <span class="server-status" style="color: var(--accent-emerald);">GASOLINA</span>
+                </div>
+                <div class="server-box" style="width: auto; height: 55px; border-color: var(--accent-cyan);">
+                  <span style="font-size: 0.75rem;">💧 Chequeo</span>
+                  <span class="server-status" style="color: var(--accent-cyan);">AGUA/ACEITE</span>
+                </div>
+                <div class="server-box" style="width: auto; height: 55px; border-color: var(--accent-purple);">
+                  <span style="font-size: 0.75rem;">💳 Caja</span>
+                  <span class="server-status" style="color: var(--accent-purple);">PAGO</span>
+                </div>
+              </div>
+
+              <!-- Panel de Estadísticas en Vivo -->
+              <div style="display: flex; justify-content: space-around; width: 100%; background: rgba(0,0,0,0.4); padding: 0.6rem; border-radius: 8px; font-family: var(--font-mono); font-size: 0.8rem;">
+                <div>Autos Atendidos: <strong id="gas-served-count" style="color: var(--accent-emerald);">12</strong></div>
+                <div>Espera Promedio: <strong id="gas-avg-wait" style="color: var(--accent-cyan);">4.8 min</strong></div>
+              </div>
+            </div>
+
+            <div class="ctrl-toolbar">
+              <button class="btn-ctrl btn-emerald" onclick="window.GasStationSim.addCar()">
+                🚗 Llega Vehículo
+              </button>
+              <button class="btn-ctrl btn-purple" onclick="window.GasStationSim.advanceStep()">
+                ⚙ Atender Vehículo
+              </button>
+              <button class="btn-ctrl" id="gas-btn-run" onclick="window.GasStationSim.toggleSimulation()">
+                ▶ Iniciar Simulación
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Parámetros del Problema 6 según el texto -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title">Parámetros del Ejercicio (Pág. 88)</span>
+              <span class="tag-badge purple">PROBLEMA 6</span>
+            </div>
+
+            <div class="concept-card cyan">
+              <h4>Intervalos de Llegada de Autos</h4>
+              <p>El problema plantea una distribución estocástica de tiempos entre llegadas (inter-arrival times). Requiere modelar la cola de espera para evitar congestión en la vía principal.</p>
+            </div>
+
+            <div class="concept-card emerald">
+              <h4>Tiempos Específicos por Servicio</h4>
+              <p>• Carga de Combustible (Magnitud variable de litros).<br>
+              • Servicio auxiliar: revisión de agua de radiador y nivel de aceite de motor.<br>
+              • Cobro en efectivo o tarjeta.</p>
+            </div>
+
+            <div class="concept-card amber">
+              <h4>¿Por qué estructurarlo con Listas Dobles?</h4>
+              <p>Permite <strong>reordenar prioridades</strong> (e.g. vehículos de emergencia), cancelar esperas de conductores impacientes que abandonan la fila desde cualquier posición en $O(1)$ sin reconstruir el arreglo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 15: CUESTIONARIO DE AUTOEVALUACIÓN (PÁGINA 85)
+         ==================================================================== -->
+    <section class="slide" data-title="Cuestionario de Autoevaluación (Pág. 85)">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">15 / 16</span>
+            <span class="slide-category">AUTOEVALUACIÓN DINÁMICA • PÁG. 85</span>
+          </div>
+          <h2 class="slide-title">Cuestionario: <span class="highlight">Relacionar Columnas</span></h2>
+          <p class="slide-subtitle">Pon a prueba al grupo: Selecciona un concepto a la izquierda y conéctalo con su definición correcta a la derecha.</p>
+        </div>
+
+        <div class="slide-body full-col">
+          <div class="glass-panel" style="height: 100%; display: flex; flex-direction: column;">
+            
+            <!-- Barra superior del Quiz -->
+            <div class="quiz-score-banner">
+              <div>🎯 <strong>Actividad de Repaso Grupal:</strong> Relaciona los 10 conceptos del texto</div>
+              <div>Puntuación: <span id="quiz-score-val" style="color: var(--accent-emerald); font-weight: bold;">0 / 10</span></div>
+              <button class="btn-ctrl" onclick="window.QuizPage85.reset()" style="padding: 0.2rem 0.6rem; font-size: 0.75rem;">Reiniciar Prueba</button>
+            </div>
+
+            <!-- Banner de Felicitación -->
+            <div id="quiz-congrats" style="display: none; background: rgba(16, 185, 129, 0.2); border: 1px solid var(--accent-emerald); border-radius: 8px; padding: 0.6rem; text-align: center; color: #6ee7b7; font-weight: bold; margin-bottom: 0.6rem;">
+              🎉 ¡Excelente! Has relacionado todos los conceptos de la página 85 exitosamente.
+            </div>
+
+            <!-- Grid de dos columnas para Match the columns -->
+            <div class="quiz-grid" style="flex: 1;">
+              <!-- Columna Izquierda: Conceptos Clave -->
+              <div class="quiz-column" id="quiz-col-concepts">
+                <!-- Generados dinámicamente con JS -->
+              </div>
+
+              <!-- Columna Derecha: Definiciones con Paréntesis -->
+              <div class="quiz-column" id="quiz-col-defs">
+                <!-- Generados dinámicamente con JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 16: CONCLUSIONES & PREGUNTAS Y RESPUESTAS
+         ==================================================================== -->
+    <section class="slide" data-title="Conclusiones y Preguntas">
+      <div class="slide-content-wrapper" style="justify-content: space-between;">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-number-pill">16 / 16</span>
+            <span class="slide-category">CIERRE DE EXPOSICIÓN</span>
+          </div>
+          <h2 class="slide-title">Síntesis Ejecutiva & <span class="highlight">Preguntas para el Grupo</span></h2>
+          <p class="slide-subtitle">Puntos clave para recordar durante evaluaciones teóricas y diseño de software real.</p>
+        </div>
+
+        <div class="slide-body grid-3col">
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title" style="color: var(--accent-cyan);">1. Doble Puntero</span>
+              <span class="tag-badge cyan">BIDIRECCIONAL</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+              La presencia de <code>LI</code> y <code>LD</code> otorga navegación en reversa y eliminación en tiempo constante <strong>$O(1)$</strong> sin requerir búsqueda previa del antecesor.
+            </p>
+            <div style="margin-top: auto; padding-top: 0.8rem; border-top: 1px solid rgba(255,255,255,0.06); font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-cyan);">
+              k->LI->LD == k == k->LD->LI
+            </div>
+          </div>
+
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title" style="color: var(--accent-purple);">2. Inserción & Centinelas</span>
+              <span class="tag-badge purple">OPTIMIZACIÓN</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+              La inserción requiere <strong>conectar primero las ligas del nuevo nodo N</strong> antes de redirigir los enlaces originales. El nodo centinela (Figura III.20) anula los casos frontera de punteros nulos.
+            </p>
+            <div style="margin-top: auto; padding-top: 0.8rem; border-top: 1px solid rgba(255,255,255,0.06); font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-purple);">
+              Cero Null Pointer Exceptions
+            </div>
+          </div>
+
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <span class="glass-panel-title" style="color: var(--accent-emerald);">3. Colas & Pilas</span>
+              <span class="tag-badge emerald">SISTEMAS</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+              Colas (PEPS / FIFO) y Pilas (UEPS / LIFO) encuentran en el almacenamiento ligado la flexibilidad ideal para modelar servidores, balanceadores y simulaciones de servicios concurrentes.
+            </p>
+            <div style="margin-top: auto; padding-top: 0.8rem; border-top: 1px solid rgba(255,255,255,0.06); font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-emerald);">
+              $O(1)$ Enqueue & Dequeue
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel" style="padding: 1rem 1.5rem; display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 800; font-size: 1.1rem; color: #fff;">¿Preguntas o Comentarios del Auditorio?</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">Puedes presionar la tecla 'M' para regresar a cualquier diagrama o simulación específica.</div>
+          </div>
+          <button class="btn-ctrl btn-emerald" onclick="window.Presentation.showSlide(0)" style="font-size: 0.85rem;">
+            ↺ Volver al Inicio
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Barra Inferior de Navegación y Progreso -->
+  <footer class="bottom-nav">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <span class="tag-badge cyan" style="font-size: 0.75rem;">TECLAS</span>
+      <span style="font-size: 0.75rem; color: var(--text-dim);">← Anterior | Siguiente → | F (Fullscreen) | M (Menú)</span>
+    </div>
+
+    <!-- Barra de progreso central -->
+    <div class="progress-container">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-bar-fill"></div>
+      </div>
+      <div class="slide-counter" id="slide-counter-text">1 / 16</div>
+    </div>
+
+    <!-- Botones Redondos de Navegación -->
+    <div class="nav-buttons-group">
+      <button class="btn-nav-round" id="btn-nav-prev" title="Diapositiva Anterior (Flecha Izquierda)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="btn-nav-round" id="btn-nav-next" title="Siguiente Diapositiva (Flecha Derecha / Espacio)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Modal / Drawer con Cuadrícula de Todas las Diapositivas -->
+  <div class="overview-modal" id="overview-modal">
+    <div class="overview-header">
+      <div>
+        <h3>Índice Rápido de la Exposición</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Selecciona cualquier diapositiva para saltar directamente durante la presentación.</p>
+      </div>
+      <button class="btn-nav-action" id="btn-close-overview">
+        ✕ Cerrar (Esc / M)
+      </button>
+    </div>
+    <div class="overview-grid" id="overview-grid">
+      <!-- Se inyecta dinámicamente con JavaScript -->
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="visualizers.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
