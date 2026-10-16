@@ -1,7 +1,4 @@
 {
-  "version": 2,
-  "name": "presentacion-listas-doblemente-ligadas",
-  "public": true,
   "cleanUrls": true,
   "headers": [
     {
